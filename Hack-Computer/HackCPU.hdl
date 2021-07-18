@@ -1,0 +1,47 @@
+CHIP HackCPU
+{
+    IN instruction[16],inM[16],reset;
+    OUT out[16],writeM,addressM[6],pc[15];
+
+    PARTS:
+    Not(in=instruction[15], out=aInstruction);  		//aInstruction is 1 if the instruction is a type
+
+  	Not(in=zr, out=nzr);								//generate not of zr and ng which are nzr and nng
+  	Not(in=ng, out=nng);
+
+  	And(a=instruction[2], b=instruction[15] , out=j1);  //bits j1 j2 j3 are jump bits and nj1,nj2,nj3 are their negations 
+    And(a=instruction[1], b=instruction[15] , out=j2);
+    And(a=instruction[0], b=instruction[15] , out=j3);
+    Not(in=j1, out=nj1);
+    Not(in=j2, out=nj2);
+    Not(in=j3, out=nj3);
+
+  	And(a=instruction[5], b=instruction[15], out=d1);	//d1,d2,d3 are write bits to modify memory,i.e d1 = 1 implies write to A register,d2 = 1 write to D,d3 = 1 write to M
+    And(a=instruction[4], b=instruction[15], out=d2);
+    And(a=instruction[3], b=instruction[15], out=d3,out= writeM);//d3 is nothing but writeM
+    And(a=instruction[12], b=instruction[15], out=a);	//a bit which decides wether one input of ALU is A or M
+    /***************************************************/
+    //Instrucion decoder:
+    And3way(x0=j1, x1=j2, x2=j3, out=jump1);			
+    And5way(x0=nj1, x1=nj2, x2=j3, x3=nzr, x4=nng, out=jump2);
+    And4way(x0=nj1, x1=j2, x2=nj3, x3=zr, out=jump3);
+    Or(a=zr, b=nng, out=a1);							//These statements calculate jump bit wether to jump or not based on j1,j2,j3 and zr and ng.jump bit goes as input to program counter
+    And4way(x0=nj1, x1=j2, x2=j3, x3=a1, out=jump4);
+    And5way(x0=j1, x1=nj2, x2=nj3, x3=nzr, x4=ng, out=jump5);
+    And4way(x0=j1, x1=nj2, x2=j3, x3=nzr, out=jump6);
+    Or(a=zr, b=ng, out=a2);
+    And4way(x0=j1, x1=j2, x2=nj3, x3=a2, out=jump7);
+
+    Or7way(x0=jump1, x1=jump2, x2=jump3, x3=jump4, x4=jump5, x5=jump6, x6=jump7, out=jump);
+    Not(in=jump, out=njump);
+   /***************************************************/
+    Or(a=d1, b=aInstruction, out=loadA);				//loadA decides wether to load register A with its input or not.Loading happens when its an A-instruction or when the d1 bit is 1
+    Mux16(a=computedValue, b=instruction, sel=aInstruction, out=mux1Out);//This Mux selects between computed value(from ALU) and current instruction and outputs to input of A register based on select line A register
+    ARegister(in=mux1Out, load=loadA, out=regAout,out[0..5]= addressM);  //ARegister is fed with the output of previous mux as input and loadA as load,addressM is address of memory location with value in A
+    DRegister(in=computedValue, load=d2, out=regDout);                   //if d2 is 1 it means computed value should be stored in DRegister so load is d2
+    Mux16(a=regAout, b=inM, sel=a, out=AorM);                            //This mux selects between A or M and output is y operand of ALU   
+    HackALU(x= regDout,y= AorM,zx= instruction[11],nx= instruction[10],zy= instruction[9],ny= instruction[8],f= instruction[7],n0= instruction[6],out = out,out= computedValue,zr= zr,ng= ng);
+                                                                        //ALU with appropriate inputs
+    PC(in=regAout, load=jump, inc=njump, reset=reset, out[0..14]=pc);   //jump tells PC wether to change pc to output of regA or increment the counter
+  
+}	

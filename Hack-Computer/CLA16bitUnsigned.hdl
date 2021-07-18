@@ -1,0 +1,20 @@
+CHIP CLA16bitUnsigned
+{
+	IN a[16],b[16],c0;
+	OUT s[16],Ovflow;
+	PARTS:
+	//For including Subtratction,c0 is A/S line
+	Xorbitwise(a= b[0..3],c = c0,b = b1);
+	Xorbitwise(a= b[4..7],c = c0,b = b2);
+	Xorbitwise(a= b[8..11],c = c0,b = b3);
+	Xorbitwise(a= b[12..15],c = c0,b = b4);
+	///////
+	CLAAdder4bit(c0= c0,x= a[0..3],y= b1,s= s[0..3],c4= c4);
+	CLAAdder4bit(c0= c4,x= a[4..7],y= b2,s= s[4..7],c4= c8);
+	CLAAdder4bit(c0= c8,x= a[8..11],y= b3,s= s[8..11],c4= c12);
+	CLAAdder4bit(c0= c12,x= a[12..15],y= b4,s= s[12..15],c4= c16);
+	//overflow
+	Not(in=c0, out=nc0);
+	And(a=nc0, b=c16, out=Ovflow);
+
+}

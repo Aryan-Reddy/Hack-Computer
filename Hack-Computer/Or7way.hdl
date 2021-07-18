@@ -1,0 +1,10 @@
+CHIP Or7way
+{
+    IN x0,x1,x2,x3,x4,x5,x6;
+    OUT out;
+
+    PARTS:
+   	Or3way(x0=x0, x1=x1, x2=x2, out=t1);
+   	Or4way(x0=x3, x1=x4, x2=x5, x3=x6, out=t2);
+   	Or(a=t1, b=t2, out=out);
+}

@@ -1,0 +1,11 @@
+CHIP Xorbitwise
+{
+    IN a[4],c;
+    OUT b[4];
+
+    PARTS:
+    Xor(a=a[0], b=c, out=b[0]);
+	Xor(a=a[1], b=c, out=b[1]);
+	Xor(a=a[2], b=c, out=b[2]);
+	Xor(a=a[3], b=c, out=b[3]);
+}

@@ -1,0 +1,43 @@
+CHIP CLAAdder4bit
+{
+	IN x[4],y[4],c0;
+	OUT s[4],c4;
+	PARTS:
+	//Propogate Terms
+	Xor(a=x[0], b=y[0], out=p0);
+	Xor(a=x[1], b=y[1], out=p1);
+	Xor(a=x[2], b=y[2], out=p2);
+	Xor(a=x[3], b=y[3], out=p3);
+	//generate Terms
+	And(a=x[0], b=y[0], out=g0);
+	And(a=x[1], b=y[1], out=g1);
+	And(a=x[2], b=y[2], out=g2);
+	And(a=x[3], b=y[3], out=g3);
+	//carry terms
+	//c1
+	And(a=p0, b=c0, out=t1);
+	Or(a=t1, b=g0, out=c1);
+	//c2
+	And3way(x0= p1,x1= p0,x2= c0,out= u0);
+	And(a=p1, b=g0, out=u1);
+	Or3way(x0= u0,x1= u1,x2= g1,out= c2);
+	//c3
+	And4way(x0= p2,x1= p1,x2= p0,x3= c0,out= v0);
+	And3way(x0= p2,x1= p1,x2= g0,out= v1);
+	And(a=p2, b=g1, out=v2);
+	Or4way(x0= v0,x1= v1,x2= v2,x3= g2,out= c3);
+	//c4
+	And5way(x0= p3,x1= p2,x2= p1,x3= p0,x4= c0,out= w0);
+	And4way(x0= p3,x1= p2,x2= p1,x3= g0,out= w1);
+	And3way(x0= p3,x1= p2,x2= g1,out= w2);
+	And(a=p3, b=g2, out=w3);
+	Or5way(x0= w0,x1= w1,x2= w2,x3= w3,x4= g3,out= c4);
+
+	//SumBitGeneration
+	Xor(a=p0, b=c0, out=s[0]);
+	Xor(a=p1, b=c1, out=s[1]);
+	Xor(a=p2, b=c2, out=s[2]);
+	Xor(a=p3, b=c3, out=s[3]);
+
+
+}

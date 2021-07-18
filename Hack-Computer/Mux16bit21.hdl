@@ -1,0 +1,73 @@
+CHIP Mux16bit21 {
+    IN  X0[16],X1[16],S;
+    OUT Y[16];
+
+    PARTS:  
+    Not(in=S, out=nS);
+
+    And(a=nS, b=X0[0], out=P00);
+    And(a=S, b=X1[0], out=P10);
+
+    And(a=nS, b=X0[1], out=P01);
+    And(a=S, b=X1[1], out=P11);
+
+    And(a=nS, b=X0[2], out=P02);
+    And(a=S, b=X1[2], out=P12);
+
+    And(a=nS, b=X0[3], out=P03);
+    And(a=S, b=X1[3], out=P13);
+
+    And(a=nS, b=X0[4], out=P04);
+    And(a=S, b=X1[4], out=P14);
+
+    And(a=nS, b=X0[5], out=P05);
+    And(a=S, b=X1[5], out=P15);
+
+    And(a=nS, b=X0[6], out=P06);
+    And(a=S, b=X1[6], out=P16);
+
+    And(a=nS, b=X0[7], out=P07);
+    And(a=S, b=X1[7], out=P17);
+
+    And(a=nS, b=X0[8], out=P08);
+    And(a=S, b=X1[8], out=P18);
+
+    And(a=nS, b=X0[9], out=P09);
+    And(a=S, b=X1[9], out=P19);
+
+    And(a=nS, b=X0[10], out=P010);
+    And(a=S, b=X1[10], out=P110);
+
+    And(a=nS, b=X0[11], out=P011);
+    And(a=S, b=X1[11], out=P111);
+
+    And(a=nS, b=X0[12], out=P012);
+    And(a=S, b=X1[12], out=P112);
+
+    And(a=nS, b=X0[13], out=P013);
+    And(a=S, b=X1[13], out=P113);
+
+    And(a=nS, b=X0[14], out=P014);
+    And(a=S, b=X1[14], out=P114);
+
+    And(a=nS, b=X0[15], out=P015);
+    And(a=S, b=X1[15], out=P115);
+
+    Or(a=P00, b=P10, out=Y[0]);
+    Or(a=P01, b=P11, out=Y[1]);
+    Or(a=P02, b=P12, out=Y[2]);
+    Or(a=P03, b=P13, out=Y[3]);
+    Or(a=P04, b=P14, out=Y[4]);
+    Or(a=P05, b=P15, out=Y[5]);
+    Or(a=P06, b=P16, out=Y[6]);
+    Or(a=P07, b=P17, out=Y[7]);
+    Or(a=P08, b=P18, out=Y[8]);
+    Or(a=P09, b=P19, out=Y[9]);
+    Or(a=P010, b=P110, out=Y[10]);
+    Or(a=P011, b=P111, out=Y[11]);
+    Or(a=P012, b=P112, out=Y[12]);
+    Or(a=P013, b=P113, out=Y[13]);
+    Or(a=P014, b=P114, out=Y[14]);
+    Or(a=P015, b=P115, out=Y[15]);
+
+}

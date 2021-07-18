@@ -1,0 +1,10 @@
+CHIP And5way
+{
+	IN x0,x1,x2,x3,x4;
+	OUT out;
+	PARTS:
+	And(a=x0, b=x1, out=t0);
+	And(a=x2, b=x3, out=t1);
+	And(a=t0, b=t1, out=t2);
+	And(a=t2, b=x4, out=out);
+}

@@ -1,0 +1,9 @@
+CHIP Or3way
+{
+    IN x0,x1,x2;
+    OUT out;
+
+    PARTS:
+   	Or(a=x0, b=x1, out=t0);
+	Or(a=x2, b=t0, out=out);
+}

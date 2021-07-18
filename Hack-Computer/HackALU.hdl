@@ -1,0 +1,24 @@
+CHIP HackALU {
+    IN x[16],y[16],zx,nx,zy,ny,f,n0;
+    OUT out[16],ng,zr;
+
+    PARTS:
+    //Mux that gives x or 0 as output based on zx
+    Mux16bit21(X0=x ,X1[0]=false ,X1[1]=false ,X1[2]=false ,X1[3]=false ,X1[4]=false ,X1[5]=false ,X1[6]=false ,X1[7]=false ,X1[8]=false ,X1[9]=false ,X1[10]=false ,X1[11]=false ,X1[12]=false ,X1[13]=false ,X1[14]=false ,X1[15]=false ,S=zx ,Y=outmux1);
+    //Mux that gives y or 0 as output based on zy
+    Mux16bit21(X0=y ,X1[0]=false ,X1[1]=false ,X1[2]=false ,X1[3]=false ,X1[4]=false ,X1[5]=false ,X1[6]=false ,X1[7]=false ,X1[8]=false ,X1[9]=false ,X1[10]=false ,X1[11]=false ,X1[12]=false ,X1[13]=false ,X1[14]=false ,X1[15]=false ,S=zy ,Y=outmux2);
+    //compliment of outputs of mux based on nx and ny
+    Xor16(a=outmux1 ,b=nx ,out=P);
+    Xor16(a=outmux2 ,b=ny ,out=Q);
+
+    CLA16bitUnsigned(c0 = false,a=P ,b=Q ,s=addPQ);
+    //Add16(a=P, b=Q, out=addPQ);
+    And16(a=P ,b=Q ,out=andPQ);
+    //select line f to choose p&q or p+q
+    Mux16bit21(X0=andPQ ,X1=addPQ ,S=f ,Y=A);
+    //xor n0 with A which is p&q or p+q and generate ng bit
+    Xor16(a=A ,b=n0 ,out=out,out = tOut,out[15]= ng);
+    //generate zr bit
+    Or16way(in=tOut, out=nZR);
+    Not(in=nZR, out=zr);
+}
